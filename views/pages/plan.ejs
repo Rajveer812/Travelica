@@ -1,0 +1,46 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container mt-3 mb-5">
+
+  <h5 class="fw-bold mb-3">🗺️ Make My Travel Plan</h5>
+
+  <!-- INPUT CARD -->
+  <div class="plan-card mb-4">
+    <form id="planForm">
+      <div class="row g-2">
+        <div class="col-6">
+          <input class="form-control" id="days" placeholder="Number of days" required />
+        </div>
+
+        <div class="col-6">
+          <input class="form-control" id="location" placeholder="City (auto-detected)" required />
+        </div>
+      </div>
+
+      <input class="form-control mt-2" id="budget" placeholder="Budget (₹)" required />
+
+      <input class="form-control mt-2" id="interests" placeholder="Interests (food, history, nature)" required />
+
+      <select class="form-control mt-2" id="pace">
+        <option value="Relaxed">Relaxed pace</option>
+        <option value="Moderate">Moderate pace</option>
+        <option value="Fast">Fast pace</option>
+      </select>
+
+      <button type="submit" class="btn btn-dark w-100 mt-3">Generate Plan</button>
+
+    </form>
+  </div>
+
+  <!-- PLAN OUTPUT -->
+  <div id="planResult"></div>
+
+  <button
+    id="downloadPdf"
+    class="btn btn-outline-dark mt-3 d-none">
+    Download PDF
+  </button>
+
+</div>
+
+<script src="/js/plan.js"></script>

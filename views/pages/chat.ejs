@@ -1,0 +1,74 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container mt-3">
+
+  <!-- CHAT HEADER -->
+  <div class="chat-header mb-2">
+    <div>
+      <h6 class="fw-bold mb-0">🐺 Travelica AI Guide</h6>
+      <p class="small text-muted mb-0">
+        Ask about places, food, routes, or plans
+      </p>
+    </div>
+    <span class="small text-muted" id="chatLocation">
+      📍 Udaipur
+    </span>
+  </div>
+
+  <!-- QUICK PROMPTS -->
+  <div class="quick-prompts mb-2 row">
+    <button class=" btn btn-primary prompt-btn col-sm-5" onclick="sendQuick('What’s nearby?')">
+      What’s nearby?
+    </button>
+    <button class=" btn btn-primary prompt-btn col-sm-5" onclick="sendQuick('Best food near me right now')">
+      Best food now
+    </button>
+    <button class=" btn btn-primary prompt-btn col-sm-5" onclick="sendQuick('Make a 2-hour plan near me')">
+      2-hour plan
+    </button>
+    <button class=" btn btn-primary prompt-btn col-sm-5" onclick="sendQuick('What should I do this evening?')">
+      This evening
+    </button>
+  </div>
+
+  <!-- CHAT BOX -->
+  <div class="chat-box">
+    <div id="chatMessages" class="chat-messages">
+      <div class="msg-row ai">
+        <div class="msg-bubble ai">
+          Hi! I’m your local AI guide. Ask me anything about nearby places, food, or plans.
+        </div>
+      </div>
+      <!-- AI TYPING INDICATOR -->
+        <div id="typingIndicator" class="msg-row ai d-none">
+          <div class="msg-bubble ai typing">
+            AI is typing<span class="dots"></span>
+          </div>
+        </div>
+      </div>
+
+    <div class="chat-input">
+      <input
+        type="text"
+        id="userInput"
+        placeholder="Ask something..."
+      />
+      <button onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/chat.js"></script>
+
+<script>
+  // Update location text if available
+  const loc = sessionStorage.getItem("userLocation");
+  if (loc) {
+    document.getElementById("chatLocation").innerText = "📍 " + loc;
+  }
+
+  function sendQuick(text) {
+    document.getElementById("userInput").value = text;
+    sendMessage();
+  }
+</script>

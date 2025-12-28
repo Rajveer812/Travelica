@@ -1,0 +1,51 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container mt-3">
+
+  <!-- PAGE TITLE -->
+  <h5 class="fw-bold mb-2" id="pageTitle">Nearby Places</h5>
+
+  <!-- MAP TOGGLE (MOBILE) -->
+  <button
+    class="btn btn-outline-dark btn-sm mb-2 d-md-none"
+    onclick="toggleMap()">
+    Show / Hide Map
+  </button>
+
+  <!-- MAP WRAPPER -->
+  <div id="mapWrapper" class="mb-3">
+    <div id="map"></div>
+  </div>
+
+  <!-- RESULT INFO -->
+  <p class="small text-muted mb-3" id="resultsInfo">
+    Finding places near you…
+  </p>
+
+  <!-- PLACES GRID -->
+  <div class="row" id="dynamicPlaces">
+    <p class="text-muted">Loading nearby places…</p>
+  </div>
+
+</div>
+
+<!-- MAP SCRIPT -->
+<script src="/js/map.js"></script>
+
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=<%= MAPS_API_KEY %>&callback=initMap&v=weekly&loading=async"
+  async
+  defer>
+</script>
+
+
+<!-- NEARBY LOGIC -->
+<script src="/js/nearby.js"></script>
+
+<!-- MAP TOGGLE SCRIPT -->
+<script>
+  function toggleMap() {
+    document.getElementById("mapWrapper")
+      .classList.toggle("d-none");
+  }
+</script>

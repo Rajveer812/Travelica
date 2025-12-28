@@ -1,0 +1,71 @@
+<% layout("layouts/boilerplate") %>
+
+<!-- HERO SECTION -->
+<section class="hero-box text-center px-3 py-5">
+  <h2 class="fw-bold mb-2">
+    📍 <span id="cityName">Travelica</span>
+  </h2>
+  <p class=" mb-4">
+    Your AI-powered local travel guide
+  </p>
+
+  <button id="getLocationBtn" class="btn btn-dark glass-btn px-4 py-2">Use My Location</button>
+
+  <p id="locationText" class="mt-2 small text-success "></p>
+</section>
+
+<!-- PRIMARY ACTIONS -->
+<section class="container mt-4">
+  <div class="row g-3">
+
+    <!-- PRIMARY CARD -->
+    <div class="col-12 col-md-6">
+      <button
+        class="glass-card primary-card w-100"
+        onclick="location.href='/nearby?category=places'">
+        🧭 Nearby Places
+      </button>
+    </div>
+
+    <!-- OTHER ACTIONS -->
+    <div class="col-12 col-md-6">
+      <button
+        class="glass-card w-100"
+        onclick="location.href='/nearby?category=food'">
+        🍽️ Food Near Me
+      </button>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <button class="glass-card w-100" onclick="location.href='/chat'">🧠 Ask AI Guide</button>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <button class="glass-card w-100"onclick="location.href='/plan'">🗺️ Make My Plan</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- TODAY IN UDAIPUR -->
+<section class="container mt-4 mb-5">
+  <div class="today-box p-3">
+    <h6 class="fw-bold mb-2" id="todayCityTitle">Today in your city</h6>
+    <ul class="list-unstyled mb-0 small">
+      <li id="weatherSummary">Detecting weather…</li>
+
+<li id="bestSuggestion" class="mt-1 text-muted">
+  Best now: —
+</li>
+
+<li id="crowdTip" class="mt-1 text-muted">
+  Crowd tip: —
+</li>
+
+    </ul>
+  </div>
+</section>
+
+<!-- SCRIPTS -->
+<script src="/js/location.js"></script>
+<script src="/js/weather.js"></script>

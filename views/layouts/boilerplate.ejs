@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travelica</title>
+  <link rel="preload" href="/images/default-place.jpg" as="image">
+  <link rel="preload" href="/images/default-food.jpg" as="image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=BBH+Bogle&family=BBH+Hegarty&family=Maven+Pro:wght@400..900&family=Oswald:wght@200..700&family=Pacifico&family=Roboto+Slab:wght@100..900&family=Rubik+Gemstones&family=Varela+Round&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/images/travelica-logo1.png">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+  <%- include("../includes/navbar") %>
+
+  <main class="container mt-4">
+    <%- body %>
+  </main>
+<a href="/chat" class="chat-fab">🐺</a>
+<a href="/plan" class="plan-fab">🗺️</a>
+<%- include("../includes/footer") %>
+<script src="/js/navbar.js"></script>
+
+</body>
+</html>
