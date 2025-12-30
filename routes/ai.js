@@ -2,12 +2,11 @@ const express = require("express");
 const axios = require("axios");
 const router = express.Router();
 
-/**
- * 🔹 PLACE SUMMARY (for nearby cards)
- */
+/* =========================================================
+   🔹 PLACE SUMMARY (Nearby / Food cards)
+========================================================= */
 router.post("/api/place-summary", async (req, res) => {
   const { name, location, category } = req.body;
-
   if (!name) return res.json({ summary: "" });
 
   const prompt =
@@ -16,21 +15,19 @@ router.post("/api/place-summary", async (req, res) => {
 You are a local food expert.
 Place: ${name}
 City: ${location || "Udaipur"}
-Write ONE sentence of 20–25 words about cuisine, vibe, and best time to visit.
+Write ONE sentence (20–25 words) about cuisine, vibe, and best time to visit.
 `
       : `
 You are a local travel guide.
 Place: ${name}
 City: ${location || "Udaipur"}
-Write ONE sentence of 20–25 words about what it is famous for and best time to visit.
+Write ONE sentence (20–25 words) about what it is famous for and best time to visit.
 `;
 
   try {
     const response = await axios.post(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-      {
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
-      },
+      { contents: [{ role: "user", parts: [{ text: prompt }] }] },
       { params: { key: process.env.GEMINI_API_KEY } }
     );
 
@@ -44,34 +41,26 @@ Write ONE sentence of 20–25 words about what it is famous for and best time to
   }
 });
 
-/**
- * 🔹 AI CHAT
- */
-/**
- * 🔹 AI CHAT (LOCATION-AWARE)
- */
+/* =========================================================
+   🔹 AI CHAT (LOCATION AWARE)
+========================================================= */
 router.post("/api/ai/chat", async (req, res) => {
   const { message, city, lat, lng } = req.body;
-
   if (!message) return res.json({ reply: "" });
 
-  const systemContext = `
+  const prompt = `
 You are Travelica AI, a smart local travel assistant.
 
-User is currently in:
+User location:
 City: ${city || "Udaipur"}
 Latitude: ${lat || "unknown"}
 Longitude: ${lng || "unknown"}
 
-IMPORTANT RULES:
-- Treat phrases like "near me", "around me", "nearby" as referring to the user's current city.
-- DO NOT ask for user's location again.
-- Answer like a local guide who already knows the city.
-- Be concise, practical, and helpful.
-`;
-
-  const prompt = `
-${systemContext}
+RULES:
+- Treat "near me / nearby" as user's current city
+- NEVER ask for location again
+- Respond like a local expert
+- Be concise and helpful
 
 User question:
 "${message}"
@@ -80,11 +69,7 @@ User question:
   try {
     const response = await axios.post(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-      {
-        contents: [
-          { role: "user", parts: [{ text: prompt }] }
-        ]
-      },
+      { contents: [{ role: "user", parts: [{ text: prompt }] }] },
       { params: { key: process.env.GEMINI_API_KEY } }
     );
 
@@ -98,10 +83,9 @@ User question:
   }
 });
 
-
-/**
- * 🔹 AI TRAVEL PLAN
- */
+/* =========================================================
+   🔹 AI TRAVEL PLAN (TABLE-LOCKED + FALLBACK)
+========================================================= */
 router.post("/api/ai/plan", async (req, res) => {
   const { location, days, budget, interests, pace } = req.body;
 
@@ -114,25 +98,41 @@ Budget: ${budget || "Moderate"}
 Interests: ${interests || "Sightseeing"}
 Pace: ${pace || "Relaxed"}
 
-Create a DAY-WISE travel plan in Markdown.
-For each day:
-- ## Day X
-- One-line summary
-- A table with:
-  Time | Activity | Location | Tips
+STRICT RULES (MANDATORY):
+- Respond ONLY in MARKDOWN
+- DO NOT write paragraphs or bullets
+- EVERY day MUST contain a MARKDOWN TABLE
+- If table format breaks, response is INVALID
+
+FORMAT (EXACT):
+
+## Day 1
+| Time | Activity | Location | Tips |
+|------|----------|----------|------|
+| ...  | ...      | ...      | ...  |
 `;
 
   try {
     const response = await axios.post(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-      {
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
-      },
+      { contents: [{ role: "user", parts: [{ text: prompt }] }] },
       { params: { key: process.env.GEMINI_API_KEY } }
     );
 
-    const plan =
+    let plan =
       response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+    /* 🛡️ HARD SAFETY FALLBACK */
+    if (!plan.includes("| Time | Activity | Location | Tips |")) {
+      plan = `
+## Day 1
+| Time | Activity | Location | Tips |
+|------|----------|----------|------|
+| Morning | Explore key attractions | City center | Start early |
+| Afternoon | Local food & rest | Popular café | Stay hydrated |
+| Evening | Scenic walk | Viewpoint | Best sunset views |
+`;
+    }
 
     res.json({ plan: plan.trim() });
   } catch (err) {
@@ -141,9 +141,9 @@ For each day:
   }
 });
 
-/**
- * 🔹 TODAY INSIGHT (Crowd + Best Now)
- */
+/* =========================================================
+   🔹 TODAY INSIGHT (Dynamic: Best + Crowd)
+========================================================= */
 router.post("/api/ai/today-insight", async (req, res) => {
   const { city, weather, hour, isWeekend } = req.body;
 
@@ -151,27 +151,21 @@ router.post("/api/ai/today-insight", async (req, res) => {
 You are a smart local travel assistant.
 
 City: ${city}
-Current weather: ${weather}
+Weather: ${weather}
 Time: ${hour}:00
 Day: ${isWeekend ? "Weekend" : "Weekday"}
 
-Return TWO short lines:
-1) Best activity right now
-2) Crowd tip
+Return EXACTLY TWO short lines:
+Best: <best activity now>
+Crowd: <crowd tip>
 
-Format STRICTLY as:
-Best: <text>
-Crowd: <text>
-
-Keep each line under 12 words.
+Each line must be under 12 words.
 `;
 
   try {
     const response = await axios.post(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-      {
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
-      },
+      { contents: [{ role: "user", parts: [{ text: prompt }] }] },
       { params: { key: process.env.GEMINI_API_KEY } }
     );
 
@@ -192,8 +186,5 @@ Keep each line under 12 words.
     });
   }
 });
-
-
-
 
 module.exports = router;
