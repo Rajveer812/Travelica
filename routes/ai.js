@@ -187,4 +187,67 @@ Each line must be under 12 words.
   }
 });
 
+/**
+ * 🔹 RE-GENERATE SINGLE DAY PLAN
+ */
+router.post("/api/ai/plan/day", async (req, res) => {
+  const {
+    city,
+    dayNumber,
+    totalDays,
+    budget,
+    interests,
+    pace
+  } = req.body;
+
+  if (!dayNumber || !city) {
+    return res.json({ dayPlan: "" });
+  }
+
+  const prompt = `
+You are a professional travel planner.
+
+City: ${city}
+Day to generate: Day ${dayNumber}
+Total days: ${totalDays}
+Budget: ${budget}
+Interests: ${interests}
+Pace: ${pace}
+
+STRICT RULES:
+- Generate ONLY Day ${dayNumber}
+- DO NOT mention any other day
+- Output MUST be in Markdown
+- Follow EXACTLY this format:
+
+## Day ${dayNumber}
+One-line summary
+
+| Time | Activity | Location | Tips |
+|------|----------|----------|------|
+| ...  | ...      | ...      | ...  |
+
+DO NOT add explanations or extra text.
+`;
+
+  try {
+    const response = await axios.post(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+      {
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      },
+      { params: { key: process.env.GEMINI_API_KEY } }
+    );
+
+    const dayPlan =
+      response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+    res.json({ dayPlan: dayPlan.trim() });
+  } catch (err) {
+    console.error("Single day plan error:", err.message);
+    res.json({ dayPlan: "" });
+  }
+});
+
+
 module.exports = router;

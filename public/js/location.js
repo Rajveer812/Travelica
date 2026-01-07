@@ -1,5 +1,6 @@
 console.log("location.js loaded");
 
+
 const btn = document.getElementById("getLocationBtn");
 const locationText = document.getElementById("locationText");
 const navbarLocation = document.getElementById("navbarLocation");
@@ -39,7 +40,6 @@ btn?.addEventListener("click", () => {
         const area = data.area || city;
 
         locationText.innerText = `📍 ${area}, ${city}`;
-        navbarLocation.innerText = `📍 ${city}`;
 
         // ✅ Persist cleanly
         sessionStorage.setItem("userCity", city);
@@ -47,6 +47,13 @@ btn?.addEventListener("click", () => {
         sessionStorage.setItem("lat", lat);
         sessionStorage.setItem("lng", lng);
 
+
+        window.dispatchEvent(new Event("locationUpdated"));
+        
+        // 🔁 Refresh "Today in City" section instantly
+        if (window.loadTodayInsight) {
+          window.loadTodayInsight();
+        }
 
       } catch (err) {
         console.error("Fetch error", err);

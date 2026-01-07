@@ -35,6 +35,16 @@ form.addEventListener("submit", async (e) => {
     lng: sessionStorage.getItem("lng")
   };
 
+  // 🔐 Store plan meta globally (needed for day regeneration)
+  window.currentPlanMeta = {
+    city: payload.location,
+    totalDays: Number(payload.days),
+    budget: payload.budget,
+    interests: payload.interests,
+    pace: payload.pace
+  };
+
+
   try {
     const res = await fetch("/api/ai/plan", {
       method: "POST",
@@ -66,15 +76,37 @@ pdfBtn.addEventListener("click", () => {
 function formatPlan(markdown) {
   if (!markdown) return "";
 
+  // Split by day headings
+  const dayBlocks = markdown.split(/^## Day\s+/gm).filter(Boolean);
+  let html = "";
+
+  dayBlocks.forEach((block, index) => {
+    const dayNumber = index + 1;
+    const fullBlock = `## Day ${block.trim()}`;
+
+    html += `
+      <div id="day-${dayNumber}" class="plan-day mb-4">
+        ${renderDayMarkdown(fullBlock)}
+
+        <button
+          class="btn btn-sm btn-outline-secondary mt-2"
+          onclick="regenerateDay(${dayNumber})">
+          🔁 Regenerate this day
+        </button>
+      </div>
+    `;
+  });
+
+  return html;
+}
+
+function renderDayMarkdown(markdown) {
   let html = markdown;
 
-  // Day headings (## Day 1)
-  html = html.replace(/^## (.*)$/gm, "<h4 class='mt-4'>$1</h4>");
+  // Day heading
+  html = html.replace(/^## (.*)$/gm, "<h4 class='mt-3'>$1</h4>");
 
-  // Bold text
-  html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-
-  // Convert Markdown tables to HTML tables
+  // Markdown table → HTML
   html = html.replace(
     /\|(.+)\|\n\|([-|\s]+)\|\n((\|.*\|\n?)*)/g,
     (match) => {
@@ -84,8 +116,8 @@ function formatPlan(markdown) {
         line.split("|").filter(Boolean)
       );
 
-      let table =
-        `<div class="table-responsive mt-3">
+      let table = `
+        <div class="table-responsive mt-2">
           <table class="table table-bordered table-striped">
             <thead><tr>`;
 
@@ -108,8 +140,46 @@ function formatPlan(markdown) {
     }
   );
 
-  // Line breaks
-  html = html.replace(/\n/g, "<br>");
-
   return html;
+}
+
+async function regenerateDay(dayNumber) {
+  const meta = window.currentPlanMeta;
+  if (!meta) return;
+
+  const container = document.getElementById(`day-${dayNumber}`);
+  if (!container) return;
+
+  container.style.opacity = "0.5";
+
+  try {
+    const res = await fetch("/api/ai/plan/day", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        city: meta.city,
+        dayNumber,
+        totalDays: meta.totalDays,
+        budget: meta.budget,
+        interests: meta.interests,
+        pace: meta.pace
+      })
+    });
+
+    const data = await res.json();
+    if (!data.dayPlan) return;
+
+    container.innerHTML = `
+      ${renderDayMarkdown(data.dayPlan)}
+      <button
+        class="btn btn-sm btn-outline-secondary mt-2"
+        onclick="regenerateDay(${dayNumber})">
+        🔁 Regenerate this day
+      </button>
+    `;
+  } catch (err) {
+    console.error("Regenerate day failed", err);
+  } finally {
+    container.style.opacity = "1";
+  }
 }
