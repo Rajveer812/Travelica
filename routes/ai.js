@@ -95,11 +95,14 @@ You are a professional travel planner.
 City: ${location || "Udaipur"}
 Days: ${days || 1}
 Budget: ${budget || "Moderate"}
+Daily travel time: ${startTime} to ${endTime}
 Interests: ${interests || "Sightseeing"}
 Pace: ${pace || "Relaxed"}
 
 STRICT RULES (MANDATORY):
 - Respond ONLY in MARKDOWN
+- Schedule activities ONLY between given time range
+- Do not include early morning or late night outside range
 - DO NOT write paragraphs or bullets
 - EVERY day MUST contain a MARKDOWN TABLE
 - If table format breaks, response is INVALID

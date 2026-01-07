@@ -7,27 +7,83 @@
   <!-- INPUT CARD -->
   <div class="plan-card mb-4">
     <form id="planForm">
+
+      <!-- DAYS -->
+      <label class="small fw-bold">Number of days</label>
+      <div class="d-flex gap-2 mb-2 flex-wrap">
+        <button type="button" class="btn btn-outline-light day-btn" data-days="1">1</button>
+        <button type="button" class="btn btn-outline-light day-btn" data-days="2">2</button>
+        <button type="button" class="btn btn-outline-light day-btn" data-days="3">3</button>
+        <button type="button" class="btn btn-outline-light" id="customDayBtn">Custom</button>
+      </div>
+
+      <input
+        type="number"
+        id="days"
+        class="form-control d-none"
+        placeholder="Enter days manually"
+        min="1"
+      />
+
+      <!-- LOCATION -->
+      <input
+        class="form-control mt-2"
+        id="location"
+        placeholder="City (auto-detected)"
+        required
+      />
+
+      <!-- BUDGET -->
+      <label class="small fw-bold mt-3">Budget (₹)</label>
+      <input
+        type="range"
+        id="budget"
+        min="1000"
+        max="50000"
+        step="500"
+        value="5000"
+        class="form-range"
+      />
+      <p class="small text-muted">
+        Selected budget: ₹<span id="budgetValue">5000</span>
+      </p>
+
+      <!-- INTERESTS -->
+      <label class="small fw-bold">Interests</label>
+      <div class="d-flex flex-wrap gap-2 mb-2" id="interestChips">
+        <button type="button" class="btn btn-outline-light interest-chip">Food</button>
+        <button type="button" class="btn btn-outline-light interest-chip">History</button>
+        <button type="button" class="btn btn-outline-light interest-chip">Nature</button>
+        <button type="button" class="btn btn-outline-light interest-chip">Shopping</button>
+        <button type="button" class="btn btn-outline-light interest-chip">Photography</button>
+      </div>
+
+      <!-- PACE -->
+      <label class="small fw-bold">Travel pace</label>
+      <div class="d-flex gap-2 mb-2 flex-wrap" id="paceChips">
+        <button type="button" class="btn btn-light pace-chip" data-value="Relaxed">Relaxed</button>
+        <button type="button" class="btn btn-outline-light pace-chip" data-value="Moderate">Moderate</button>
+        <button type="button" class="btn btn-outline-light pace-chip" data-value="Fast">Fast</button>
+      </div>
+
+      <!-- TIME RANGE -->
+      <label class="small fw-bold">Daily travel time</label>
       <div class="row g-2">
         <div class="col-6">
-          <input class="form-control" id="days" placeholder="Number of days" required />
+          <input type="time" id="startTime" class="form-control" value="10:00" />
         </div>
-
         <div class="col-6">
-          <input class="form-control" id="location" placeholder="City (auto-detected)" required />
+          <input type="time" id="endTime" class="form-control" value="19:00" />
         </div>
       </div>
 
-      <input class="form-control mt-2" id="budget" placeholder="Budget (₹)" required />
+      <p class="small text-muted mt-1">
+        AI plans activities only within this time range
+      </p>
 
-      <input class="form-control mt-2" id="interests" placeholder="Interests (food, history, nature)" required />
-
-      <select class="form-control mt-2" id="pace">
-        <option value="Relaxed">Relaxed pace</option>
-        <option value="Moderate">Moderate pace</option>
-        <option value="Fast">Fast pace</option>
-      </select>
-
-      <button type="submit" class="btn btn-dark w-100 mt-3">Generate Plan</button>
+      <button type="submit" class="btn btn-dark w-100 mt-4">
+        Generate Plan
+      </button>
 
     </form>
   </div>

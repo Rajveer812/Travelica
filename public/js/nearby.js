@@ -18,6 +18,21 @@ function scrollToMap() {
   });
 }
 
+function getDistanceInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth radius (km)
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 
 /**
  * 🔹 Init page
@@ -252,17 +267,51 @@ document.addEventListener("click", (e) => {
   const btn = e.target.closest(".navigate-btn");
   if (!btn) return;
 
-  const lat = Number(btn.dataset.lat);
-  const lng = Number(btn.dataset.lng);
+  const placeLat = Number(btn.dataset.lat);
+  const placeLng = Number(btn.dataset.lng);
 
-  // 1️⃣ Smooth scroll to map
+  const userLat = Number(sessionStorage.getItem("lat"));
+  const userLng = Number(sessionStorage.getItem("lng"));
+
+  // Safety
+  if (!userLat || !userLng) return;
+
+  const distance = getDistanceInKm(
+    userLat,
+    userLng,
+    placeLat,
+    placeLng
+  );
+
+  const indicator = document.getElementById("youAreHere");
+  const placeEl = document.getElementById("currentPlace");
+
+  const card = btn.closest(".card");
+  const placeName =
+    card?.querySelector("h6")?.innerText || "this place";
+
+  // 🎯 SHOW ONLY IF WITHIN 2 KM
+  if (distance <= 2) {
+    placeEl.innerText = placeName;
+    indicator.classList.remove("d-none");
+
+    // auto-hide after 4 seconds
+    setTimeout(() => {
+      indicator.classList.add("d-none");
+    }, 4000);
+  } else {
+    indicator.classList.add("d-none");
+  }
+
+  // 📍 Scroll to map
   scrollToMap();
 
-  // 2️⃣ Focus map after scroll
+  // 🎯 Focus map
   setTimeout(() => {
     if (window.map) {
-      map.panTo({ lat, lng });
+      map.panTo({ lat: placeLat, lng: placeLng });
       map.setZoom(15);
     }
   }, 400);
 });
+

@@ -1,8 +1,6 @@
-/* =====================
-   THEME VARIABLES
-===================== */
-
-
+/* =====================================================
+   1. THEME VARIABLES
+===================================================== */
 :root {
   --bg-main: #023859;
   --bg-card: #26658C;
@@ -19,42 +17,46 @@
   --text-light: #A7EBF2;
 }
 
-*{
+/* =====================================================
+   2. BASE RESET & TYPOGRAPHY
+===================================================== */
+* {
   font-family: "Varela Round", sans-serif;
   font-weight: 400;
-  font-style: normal;
 }
 
-/* =====================
-   GLOBAL
-===================== */
 body {
   background: var(--bg-main);
   color: var(--text-dark);
 }
-/* =====================
-   NAVBAR (TRAVELICA)
-===================== */
 
+/* =====================================================
+   3. NAVBAR (TRAVELICA)
+===================================================== */
 .travelica-navbar {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: linear-gradient(
-    135deg,
-    #011C34,
-    #011C35,
-    #011C40
-  );
-  color: #DAF1DE;
   height: 58px;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
 
+  background: linear-gradient(135deg, #011C34, #011C35, #011C40);
+  color: #DAF1DE;
+
   border-radius: 0 0 18px 18px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+.nav-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+
+  /* 🔒 Prevent overflow */
+  position: relative;
+  z-index: 2;
 }
 
 /* Brand */
@@ -64,9 +66,6 @@ body {
 
 .brand-text {
   font-family: "BBH Hegarty", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  
   letter-spacing: 0.5px;
   font-size: 1.05rem;
 }
@@ -78,64 +77,28 @@ body {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.8rem;
-  white-space: nowrap;
   max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.nav-logo {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
-  padding: 0;
+  white-space: nowrap;
 }
 
-
-/* Make Plan button */
-.plan-btn {
-  background: #DAF1DE;
-  color: #0d1620;
-  border: none;
-  border-radius: 18px;
-  padding: 6px 14px;
-  font-weight: 600;
-  font-size: 0.8rem;
-}
-
-.plan-btn:hover {
-  background: #BEB69B;
-  color: #0d1220;
-}
-
-/* Mobile polish */
-@media (max-width: 576px) {
-  .brand-text {
-    font-size: 0.95rem;
-  }
-
-  .navbar-location {
-    max-width: 110px;
-    font-size: 0.75rem;
-  }
-}
-
-/* =====================
-   HERO (HOME)
-===================== */
+/* =====================================================
+   4. HERO SECTION (HOME)
+===================================================== */
 .hero-box {
   background: linear-gradient(180deg, var(--soft-accent), var(--bg-main));
   border-radius: 18px;
 }
-#cityName{
+
+#cityName {
   font-family: "Pacifico", cursive;
-  font-weight: 400;
-  font-style: normal;
   font-size: 170%;
 }
-/* =====================
-   GLASS BUTTON
-===================== */
+
+/* =====================================================
+   5. GLASS UI ELEMENTS
+===================================================== */
 .glass-btn {
   background: var(--primary);
   border: none;
@@ -149,55 +112,39 @@ body {
   background: var(--secondary);
 }
 
-/* =====================
-   GLASS CARDS (HOME)
-===================== */
 .glass-card {
   padding: 20px;
-  font-weight: 600;
-  font-size: 1rem;
   border-radius: 16px;
-  border: none;
   background: #bdf4fa;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 22px rgba(5, 31, 32, 0.12);
+  box-shadow: 0 8px 22px rgba(5,31,32,0.12);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 28px rgba(5, 31, 32, 0.18);
 }
 
-/* PRIMARY CARD */
-.primary-card {
-  background: var(--primary-dark);
-  color: var(--text-light);
-}
-
-/* =====================
-   TODAY INSIGHT
-===================== */
+/* =====================================================
+   6. TODAY INSIGHT
+===================================================== */
 .today-box {
   background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(5, 31, 32, 0.1);
+  box-shadow: 0 6px 18px rgba(5,31,32,0.1);
 }
 
-/* =====================
-   NEARBY / FOOD CARDS
-===================== */
+/* =====================================================
+   7. NEARBY & FOOD CARDS
+===================================================== */
 .place-card .card {
   border-radius: 18px;
   overflow: hidden;
-  border: none;
-  box-shadow: 0 8px 22px rgba(5, 31, 32, 0.12);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 8px 22px rgba(5,31,32,0.12);
+  transition: transform 0.25s ease;
 }
 
 .place-card .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 14px 30px rgba(5, 31, 32, 0.18);
 }
 
 .place-card img {
@@ -210,39 +157,23 @@ body {
   color: var(--primary-dark);
 }
 
-@media (max-width: 768px) {
-  .place-card img {
-    height: 200px;
-  }
-}
-
-/* =====================
-   MAP
-===================== */
+/* =====================================================
+   8. MAP
+===================================================== */
 #map {
   width: 100%;
   height: 320px;
   border-radius: 16px;
 }
 
-/* =====================
-   CHAT UI
-===================== */
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--bg-card);
-  border-radius: 14px;
-  padding: 12px 14px;
-  box-shadow: 0 4px 14px rgba(5, 31, 32, 0.08);
-}
-
+/* =====================================================
+   9. CHAT UI
+===================================================== */
 .chat-box {
   background: #266586;
   border-radius: 20px;
-  padding: 15px;
   height: 80vh;
+  padding: 15px;
   display: flex;
   flex-direction: column;
 }
@@ -250,215 +181,99 @@ body {
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
-.prompt-btn{
-  background-color: #011C34;
-  margin: 0.2em;
-}
-/* =====================
-   CHAT MESSAGES
-===================== */
+
+/* Messages */
 .msg-row {
   display: flex;
-  width: 100%;
 }
 
-.msg-row.ai {
-  justify-content: flex-start;
-}
-
-.msg-row.user {
-  justify-content: flex-end;
-}
+.msg-row.ai { justify-content: flex-start; }
+.msg-row.user { justify-content: flex-end; }
 
 .msg-bubble {
   padding: 10px 14px;
   border-radius: 16px;
   max-width: 75%;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  word-wrap: break-word;
 }
 
-/* AI bubble */
 .msg-bubble.ai {
   background: #011c40;
-  color: #b4edf4;
-  border-top-left-radius: 4px;
 }
 
-/* User bubble */
 .msg-bubble.user {
   background: var(--primary-dark);
-  color: #b4edf4;
-  border-top-right-radius: 4px;
 }
 
-/* =====================
-   AI TYPING INDICATOR
-===================== */
-.msg-bubble.typing {
-  font-style: italic;
-  opacity: 0.85;
-}
-
-.dots::after {
-  content: "";
-  animation: dots 1.5s infinite;
-}
-
-@keyframes dots {
-  0% { content: ""; }
-  25% { content: "."; }
-  50% { content: ".."; }
-  75% { content: "..."; }
-}
-
-/* =====================
-   CHAT INPUT
-===================== */
-.chat-input {
-  display: flex;
-  gap: 10px;
-}
-
-.chat-input input {
-  flex: 1;
-  padding: 12px;
-  border-radius: 24px;
-  border: none;
-  outline: none;
-}
-
-.chat-input button {
-  border-radius: 50%;
-  padding: 10px 14px;
-  border: none;
-  background: var(--primary-dark);
-  color: var(--text-light);
-}
-
-/* =====================
-   FLOATING BUTTONS
-===================== */
+/* =====================================================
+   10. FLOATING ACTION BUTTONS
+===================================================== */
 .chat-fab,
 .plan-fab {
   position: fixed;
   right: 20px;
   border-radius: 50%;
   padding: 12px 15px;
-  text-decoration: none;
-  box-shadow: 0 6px 18px rgba(5, 31, 32, 0.25);
-}
-
-.chat-fab {
-  bottom: 20px;
   background: var(--accent);
   color: var(--text-light);
-  font-size: 20px;
 }
 
-.plan-fab {
-  bottom: 80px;
-  background: var(--accent);
-  color: var(--text-light);
-  font-size: 18px;
-}
-
-/* =====================
-   PLAN PAGE
-===================== */
+/* =====================================================
+   11. PLAN PAGE (MAKE MY PLAN)
+===================================================== */
 .plan-card {
   background: var(--bg-card);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 8px 20px rgba(5, 31, 32, 0.12);
+  border-radius: 20px;
+  padding: 18px;
 }
 
-#planResult h4 {
-  background: var(--primary-dark);
-  color: var(--text-light);
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 1rem;
+.day-btn,
+.interest-chip,
+.pace-chip {
+  border-radius: 999px;
+  font-size: 0.8rem;
+  padding: 6px 14px;
 }
 
-#planResult table {
-  background: var(--bg-card);
-  border-radius: 12px;
-  overflow: hidden;
+.day-btn.btn-light,
+.interest-chip.btn-light,
+.pace-chip.btn-light {
+  background: var(--accent);
+  color: #000;
 }
 
-#planResult th {
-  background: #e5efe0;
-  color: var(--primary-dark);
-  font-weight: 600;
+.plan-day {
+  background: rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 12px;
 }
 
-#planResult td {
-  font-size: 0.9rem;
+/* =====================================================
+   12. FOOTER
+===================================================== */
+.travelica-footer {
+  background: linear-gradient(180deg, #011C35, #011C40);
+  color: #DAF1DE;
+  border-radius: 28px 28px 0 0;
 }
 
-/* =====================
-   PRINT MODE
-===================== */
+/* =====================================================
+   13. RESPONSIVE & PRINT
+===================================================== */
+@media (max-width: 576px) {
+  .navbar-location {
+    max-width: 110px;
+    font-size: 0.75rem;
+  }
+}
+
 @media print {
   body {
-    background: #ffffff;
+    background: #fff;
   }
 
   button,
   .plan-card {
     display: none;
-  }
-}
-
-
-
-.travelica-footer {
-  background: linear-gradient(
-    180deg,
-    #011C35,
-    #011C40
-  );
-  color: #DAF1DE;
-  border-top-left-radius: 28px;
-  border-top-right-radius: 28px;
-  box-shadow: 0 -8px 24px rgba(0,0,0,0.25);
-}
-
-.footer-brand {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: #a7ebf2;
-  margin-bottom: 10px;
-}
-
-.footer-text {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  max-width: 520px;
-  opacity: 0.9;
-}
-
-.footer-divider {
-  border-color: rgba(218, 241, 222, 0.2);
-  margin: 20px auto 12px;
-  max-width: 300px;
-}
-
-.footer-bottom {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  .footer-text,
-  .footer-about {
-    padding: 0 12px;
   }
 }

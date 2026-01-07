@@ -1,24 +1,85 @@
-// DOM references
 const form = document.getElementById("planForm");
 const result = document.getElementById("planResult");
 const pdfBtn = document.getElementById("downloadPdf");
 
 const locationInput = document.getElementById("location");
 const daysInput = document.getElementById("days");
-const budgetInput = document.getElementById("budget");
-const interestsInput = document.getElementById("interests");
-const paceInput = document.getElementById("pace");
+const budgetSlider = document.getElementById("budget");
+const budgetValue = document.getElementById("budgetValue");
 
-// ✅ Auto-fill location from navbar/session
+let selectedDays = null;
+let selectedInterests = [];
+let selectedPace = "Relaxed";
+
+/* =====================
+   AUTO LOCATION
+===================== */
 document.addEventListener("DOMContentLoaded", () => {
-  const savedCity = sessionStorage.getItem("userCity");
-  if (savedCity && locationInput) {
-    locationInput.value = savedCity;
-  }
+  const city = sessionStorage.getItem("userCity");
+  if (city) locationInput.value = city;
 });
 
+/* =====================
+   DAYS BUTTONS
+===================== */
+document.querySelectorAll(".day-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    selectedDays = btn.dataset.days;
+    daysInput.value = selectedDays;
+    daysInput.classList.add("d-none");
 
-// FORM SUBMIT
+    document.querySelectorAll(".day-btn")
+      .forEach(b => b.classList.replace("btn-light", "btn-outline-light"));
+
+    btn.classList.replace("btn-outline-light", "btn-light");
+  });
+});
+
+document.getElementById("customDayBtn").addEventListener("click", () => {
+  daysInput.classList.remove("d-none");
+  daysInput.focus();
+});
+
+/* =====================
+   BUDGET SLIDER
+===================== */
+budgetSlider.addEventListener("input", () => {
+  budgetValue.innerText = budgetSlider.value;
+});
+
+/* =====================
+   INTERESTS
+===================== */
+document.querySelectorAll(".interest-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    chip.classList.toggle("btn-light");
+    chip.classList.toggle("btn-outline-light");
+
+    const value = chip.innerText.toLowerCase();
+    if (selectedInterests.includes(value)) {
+      selectedInterests = selectedInterests.filter(i => i !== value);
+    } else {
+      selectedInterests.push(value);
+    }
+  });
+});
+
+/* =====================
+   PACE
+===================== */
+document.querySelectorAll(".pace-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll(".pace-chip")
+      .forEach(c => c.classList.replace("btn-light", "btn-outline-light"));
+
+    chip.classList.replace("btn-outline-light", "btn-light");
+    selectedPace = chip.dataset.value;
+  });
+});
+
+/* =====================
+   FORM SUBMIT
+===================== */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -28,14 +89,14 @@ form.addEventListener("submit", async (e) => {
   const payload = {
     location: sessionStorage.getItem("userCity") || locationInput.value,
     days: daysInput.value,
-    budget: budgetInput.value,
-    interests: interestsInput.value,
-    pace: paceInput.value,
-    lat: sessionStorage.getItem("lat"),
-    lng: sessionStorage.getItem("lng")
+    budget: budgetSlider.value,
+    interests: selectedInterests.join(", "),
+    pace: selectedPace,
+    startTime: document.getElementById("startTime").value,
+    endTime: document.getElementById("endTime").value
   };
 
-  // 🔐 Store plan meta globally (needed for day regeneration)
+  // Store meta for regenerate day
   window.currentPlanMeta = {
     city: payload.location,
     totalDays: Number(payload.days),
@@ -43,7 +104,6 @@ form.addEventListener("submit", async (e) => {
     interests: payload.interests,
     pace: payload.pace
   };
-
 
   try {
     const res = await fetch("/api/ai/plan", {
@@ -53,44 +113,32 @@ form.addEventListener("submit", async (e) => {
     });
 
     const data = await res.json();
-    if (!data.plan) throw new Error("No plan returned");
+    if (!data.plan) throw new Error("No plan");
 
-    // ✅ Render formatted plan
     result.innerHTML = formatPlan(data.plan);
     pdfBtn.classList.remove("d-none");
   } catch (err) {
     console.error(err);
     result.innerHTML =
-      "<p class='text-danger'>Failed to generate plan. Please try again.</p>";
+      "<p class='text-danger'>Failed to generate plan.</p>";
   }
 });
 
-// PDF download
-pdfBtn.addEventListener("click", () => {
-  window.print();
-});
-
-/**
- * 🔹 Convert AI Markdown plan into formatted HTML
- */
+/* =====================
+   FORMAT PLAN
+===================== */
 function formatPlan(markdown) {
-  if (!markdown) return "";
-
-  // Split by day headings
-  const dayBlocks = markdown.split(/^## Day\s+/gm).filter(Boolean);
+  const blocks = markdown.split(/^## Day\s+/gm).filter(Boolean);
   let html = "";
 
-  dayBlocks.forEach((block, index) => {
-    const dayNumber = index + 1;
-    const fullBlock = `## Day ${block.trim()}`;
-
+  blocks.forEach((block, index) => {
+    const day = index + 1;
     html += `
-      <div id="day-${dayNumber}" class="plan-day mb-4">
-        ${renderDayMarkdown(fullBlock)}
-
+      <div id="day-${day}" class="plan-day mb-4">
+        ${renderDay(block, day)}
         <button
           class="btn btn-sm btn-outline-secondary mt-2"
-          onclick="regenerateDay(${dayNumber})">
+          onclick="regenerateDay(${day})">
           🔁 Regenerate this day
         </button>
       </div>
@@ -100,42 +148,31 @@ function formatPlan(markdown) {
   return html;
 }
 
-function renderDayMarkdown(markdown) {
-  let html = markdown;
-
-  // Day heading
+function renderDay(block, day) {
+  let html = `## Day ${block}`;
   html = html.replace(/^## (.*)$/gm, "<h4 class='mt-3'>$1</h4>");
 
-  // Markdown table → HTML
   html = html.replace(
     /\|(.+)\|\n\|([-|\s]+)\|\n((\|.*\|\n?)*)/g,
-    (match) => {
+    match => {
       const lines = match.trim().split("\n");
       const headers = lines[0].split("|").filter(Boolean);
-      const rows = lines.slice(2).map(line =>
-        line.split("|").filter(Boolean)
-      );
+      const rows = lines.slice(2).map(r => r.split("|").filter(Boolean));
 
-      let table = `
-        <div class="table-responsive mt-2">
-          <table class="table table-bordered table-striped">
-            <thead><tr>`;
+      let table = `<div class="table-responsive mt-2">
+      <table class="table table-bordered table-striped">
+      <thead><tr>`;
 
-      headers.forEach(h => {
-        table += `<th>${h.trim()}</th>`;
-      });
+      headers.forEach(h => table += `<th>${h.trim()}</th>`);
+      table += "</tr></thead><tbody>";
 
-      table += `</tr></thead><tbody>`;
-
-      rows.forEach(row => {
+      rows.forEach(r => {
         table += "<tr>";
-        row.forEach(col => {
-          table += `<td>${col.trim()}</td>`;
-        });
+        r.forEach(c => table += `<td>${c.trim()}</td>`);
         table += "</tr>";
       });
 
-      table += `</tbody></table></div>`;
+      table += "</tbody></table></div>";
       return table;
     }
   );
@@ -143,13 +180,14 @@ function renderDayMarkdown(markdown) {
   return html;
 }
 
-async function regenerateDay(dayNumber) {
+/* =====================
+   REGENERATE DAY
+===================== */
+async function regenerateDay(day) {
   const meta = window.currentPlanMeta;
   if (!meta) return;
 
-  const container = document.getElementById(`day-${dayNumber}`);
-  if (!container) return;
-
+  const container = document.getElementById(`day-${day}`);
   container.style.opacity = "0.5";
 
   try {
@@ -158,7 +196,7 @@ async function regenerateDay(dayNumber) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         city: meta.city,
-        dayNumber,
+        dayNumber: day,
         totalDays: meta.totalDays,
         budget: meta.budget,
         interests: meta.interests,
@@ -167,18 +205,14 @@ async function regenerateDay(dayNumber) {
     });
 
     const data = await res.json();
-    if (!data.dayPlan) return;
-
     container.innerHTML = `
-      ${renderDayMarkdown(data.dayPlan)}
+      ${renderDay(data.dayPlan, day)}
       <button
         class="btn btn-sm btn-outline-secondary mt-2"
-        onclick="regenerateDay(${dayNumber})">
+        onclick="regenerateDay(${day})">
         🔁 Regenerate this day
       </button>
     `;
-  } catch (err) {
-    console.error("Regenerate day failed", err);
   } finally {
     container.style.opacity = "1";
   }
