@@ -1,0 +1,20 @@
+.place-card .card {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(5,31,32,0.12);
+  transition: transform 0.25s ease;
+}
+
+.place-card .card:hover {
+  transform: translateY(-5px);
+}
+
+.place-card img {
+  height: 180px;
+  object-fit: cover;
+}
+
+.place-card h6 {
+  font-weight: 600;
+  color: var(--primary-dark);
+}

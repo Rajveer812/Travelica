@@ -1,0 +1,26 @@
+.plan-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.day-btn,
+.interest-chip,
+.pace-chip {
+  border-radius: 999px;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+}
+
+.day-btn.btn-light,
+.interest-chip.btn-light,
+.pace-chip.btn-light {
+  background: var(--accent);
+  color: #000;
+}
+
+.plan-day {
+  background: rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 12px;
+}

@@ -1,0 +1,9 @@
+* {
+  font-family: "Varela Round", sans-serif;
+  font-weight: 400;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-dark);
+}

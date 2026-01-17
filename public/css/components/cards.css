@@ -1,0 +1,11 @@
+.glass-card {
+  padding: 20px;
+  border-radius: 16px;
+  background: #bdf4fa;
+  box-shadow: 0 8px 22px rgba(5,31,32,0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-3px);
+}

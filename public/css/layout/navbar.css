@@ -1,0 +1,43 @@
+.travelica-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 58px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background: linear-gradient(135deg, #011C34, #011C35, #011C40);
+  color: #DAF1DE;
+
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+.nav-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+
+  /* 🔒 Prevent overflow */
+  position: relative;
+  z-index: 2;
+}
+
+/* Brand */
+.brand-icon {
+  font-size: 1.3rem;
+}
+
+/* Location pill */
+.navbar-location {
+  background: rgba(218, 253, 222, 0.15);
+  color: #DAF1DE;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

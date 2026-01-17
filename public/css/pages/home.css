@@ -1,0 +1,10 @@
+.hero-box {
+  background: linear-gradient(180deg, var(--soft-accent), var(--bg-main));
+  border-radius: 18px;
+}
+
+.today-box {
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(5,31,32,0.1);
+}
