@@ -315,3 +315,28 @@ document.addEventListener("click", (e) => {
   }, 400);
 });
 
+let touchStartY = 0;
+
+document.addEventListener("touchstart", e => {
+  touchStartY = e.touches[0].clientY;
+});
+
+document.addEventListener("touchend", e => {
+  const touchEndY = e.changedTouches[0].clientY;
+  const diff = touchStartY - touchEndY;
+
+  if (diff > 80) {
+    // swipe up → show map
+    document.getElementById("mapWrapper")?.classList.remove("d-none");
+  } 
+  else if (diff < -80) {
+    // swipe down → hide map
+    document.getElementById("mapWrapper")?.classList.add("d-none");
+  }
+});
+
+if (window.scrollY === 0 && diff < -100) {
+  nextPageToken = null;
+  seenPlaces.clear();
+  loadMorePlaces();
+}

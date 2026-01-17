@@ -93,7 +93,9 @@ form.addEventListener("submit", async (e) => {
     interests: selectedInterests.join(", "),
     pace: selectedPace,
     startTime: document.getElementById("startTime").value,
-    endTime: document.getElementById("endTime").value
+    endTime: document.getElementById("endTime").value,
+    lat: sessionStorage.getItem("lat"),
+    lng: sessionStorage.getItem("lng")
   };
 
   // Store meta for regenerate day
@@ -217,3 +219,18 @@ async function regenerateDay(day) {
     container.style.opacity = "1";
   }
 }
+let startX = 0;
+
+document.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend", e => {
+  const diffX = startX - e.changedTouches[0].clientX;
+
+  if (diffX > 80) {
+    goToNextDay();
+  } else if (diffX < -80) {
+    goToPrevDay();
+  }
+});

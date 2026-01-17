@@ -87,21 +87,27 @@ User question:
    🔹 AI TRAVEL PLAN (TABLE-LOCKED + FALLBACK)
 ========================================================= */
 router.post("/api/ai/plan", async (req, res) => {
-  const { location, days, budget, interests, pace } = req.body;
+  const { location, days, budget, interests, pace,startTime,endTime} = req.body;
 
+  const safeStartTime = startTime || "10:00";
+  const safeEndTime = endTime || "19:00";
   const prompt = `
 You are a professional travel planner.
 
 City: ${location || "Udaipur"}
 Days: ${days || 1}
 Budget: ${budget || "Moderate"}
-Daily travel time: ${startTime} to ${endTime}
+Daily travel time: ${safeStartTime} to ${safeEndTime}
 Interests: ${interests || "Sightseeing"}
 Pace: ${pace || "Relaxed"}
 
+IMPORTANT:
+- Optimize daily route to minimize travel backtracking
+- Group nearby places together geographically
+
 STRICT RULES (MANDATORY):
 - Respond ONLY in MARKDOWN
-- Schedule activities ONLY between given time range
+- Schedule activities ONLY between ${safeStartTime} and ${safeEndTime}
 - Do not include early morning or late night outside range
 - DO NOT write paragraphs or bullets
 - EVERY day MUST contain a MARKDOWN TABLE
@@ -131,9 +137,8 @@ FORMAT (EXACT):
 ## Day 1
 | Time | Activity | Location | Tips |
 |------|----------|----------|------|
-| Morning | Explore key attractions | City center | Start early |
-| Afternoon | Local food & rest | Popular café | Stay hydrated |
-| Evening | Scenic walk | Viewpoint | Best sunset views |
+| ${safeStartTime} | Explore nearby attractions | City center | Start relaxed |
+| ${safeEndTime} | Evening walk & food | Popular area | Avoid peak crowds |
 `;
     }
 
